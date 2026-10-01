@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}RedirectVPNspoof{% endblock %}</title>
+    <style>
+        :root { --bg:#0f1115; --card:#1a1d24; --fg:#e6e6e6; --muted:#9aa0a6; --accent:#4f8cff; --ok:#3ec46d; --err:#ff5c5c; }
+        * { box-sizing: border-box; }
+        body { margin:0; font-family:system-ui,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--fg); }
+        header { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:var(--card); border-bottom:1px solid #262a33; }
+        header a { color:var(--fg); text-decoration:none; font-weight:600; }
+        .container { max-width:960px; margin:24px auto; padding:0 16px; }
+        .card { background:var(--card); border:1px solid #262a33; border-radius:10px; padding:18px; margin-bottom:18px; }
+        label { display:block; font-size:13px; color:var(--muted); margin:10px 0 4px; }
+        input, textarea, select { width:100%; padding:10px; border-radius:8px; border:1px solid #333a45; background:#11141a; color:var(--fg); font-size:14px; }
+        textarea { min-height:160px; font-family:ui-monospace,Menlo,Consolas,monospace; }
+        button { margin-top:14px; padding:10px 16px; border:0; border-radius:8px; background:var(--accent); color:#fff; font-size:14px; cursor:pointer; }
+        button.secondary { background:#2a2f3a; }
+        .error { color:var(--err); font-size:13px; margin-top:8px; }
+        .ok { color:var(--ok); }
+        .muted { color:var(--muted); font-size:13px; }
+        pre { background:#0b0d11; padding:12px; border-radius:8px; overflow:auto; font-size:13px; }
+        table { width:100%; border-collapse:collapse; }
+        th,td { text-align:left; padding:8px; border-bottom:1px solid #262a33; font-size:14px; }
+        a.link { color:var(--accent); word-break:break-all; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="{{ url_for('index') }}">RedirectVPNspoof</a>
+        {% if session.username %}
+            <span class="muted">{{ session.username }} · <a href="{{ url_for('logout') }}">выйти</a></span>
+        {% endif %}
+    </header>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

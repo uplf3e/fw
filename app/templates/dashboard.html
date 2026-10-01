@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Панель · RedirectVPNspoof{% endblock %}
+{% block content %}
+<div class="card">
+    <h2>Создать заглушку запроса</h2>
+    <p class="muted">Вставьте целевой URL и заголовки. После отправки система выполнит GET-запрос
+       с этими заголовками и сгенерирует публичную ссылку на результат.</p>
+    <form method="post">
+        <label>URL</label>
+        <input name="url" placeholder="https://api.example.com/v1/..." value="{{ request.form.url }}">
+        <label>Метод</label>
+        <select name="method">
+            <option value="GET" selected>GET</option>
+            <option value="POST">POST</option>
+        </select>
+        <label>Заголовки (JSON или Python-словарь)</label>
+        <textarea name="headers" placeholder='headers = {
+    "x-hwid": "5fe4684b-e449-4e38-9166-a32f73e3ab3b",
+    "User-Agent": "Happ/4.12.0/ios/2606121423535"
+}'>{{ request.form.headers }}</textarea>
+        <button type="submit">Создать и сгенерировать ссылку</button>
+        {% if error %}<div class="error">{{ error }}</div>{% endif %}
+        {% if created %}<div class="ok" style="margin-top:10px;">Готовая ссылка для VPN/приложения (вставь как базовый URL API):</div>
+            <a class="link" href="{{ created }}">{{ created }}</a>
+            <p class="muted">Все под-пути и запросы (GET/POST/...) будут проксироваться на реальный хост с твоими заголовками.
+               Например: <span class="link">{{ created }}/v1/example?x=1</span></p>{% endif %}
+    </form>
+</div>
+
+<div class="card">
+    <h2>Мои ссылки</h2>
+    {% if items %}
+    <table>
+        <tr><th>Метод</th><th>URL</th><th>Статус</th><th>Переходы</th><th>Ссылка</th><th>Создано</th><th>Последний заход</th></tr>
+        {% for it in items %}
+        <tr>
+            <td>{{ it.method }}</td>
+            <td class="muted" style="max-width:240px;overflow:hidden;text-overflow:ellipsis;">{{ it.url }}</td>
+            <td>{{ it.status_code if it.status_code is not none else 'ERR' }}</td>
+            <td>{{ it.hits }}</td>
+            <td><a class="link" href="{{ url_for('view', token=it.token) }}">/view/{{ it.token }}</a></td>
+            <td class="muted">{{ it.created_at[:19] }}</td>
+            <td class="muted">{{ it.last_hit[:19] if it.last_hit else '—' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p class="muted">Пока нет созданных ссылок.</p>
+    {% endif %}
+</div>
+{% endblock %}

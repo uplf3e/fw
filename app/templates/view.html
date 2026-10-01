@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Результат · RedirectVPNspoof{% endblock %}
+{% block content %}
+{% if not_found %}
+<div class="card"><h2>Ссылка не найдена</h2><p class="muted">Запрос с таким токеном не существует.</p></div>
+{% else %}
+<div class="card">
+    <h2>Запрос</h2>
+    <p><b>Метод:</b> {{ row.method }} &nbsp; <b>URL:</b> <span class="link">{{ row.url }}</span></p>
+    <label>Готовая ссылка для VPN/приложения (базовый URL API)</label>
+    <pre>{{ request.url_root }}r/{{ row.token }}</pre>
+    <label>Заголовки запроса</label>
+    <pre>{{ row.req_headers }}</pre>
+</div>
+
+<div class="card">
+    <h2>Ответ <span class="ok" style="font-size:13px;">● live (обновляется при каждом открытии)</span></h2>
+    {% if row.error %}
+        <div class="error">Ошибка выполнения: {{ row.error }}</div>
+    {% else %}
+        <p><b>Статус:</b> {{ row.status_code }}</p>
+        <label>Заголовки ответа</label>
+        <pre>{{ row.resp_headers }}</pre>
+        <label>Тело ответа</label>
+        <pre>{{ row.resp_body }}</pre>
+    {% endif %}
+    <p class="muted">Создано: {{ row.created_at[:19] }} &nbsp; · &nbsp; Переходов: <b>{{ row.hits }}</b> &nbsp; · &nbsp; Последний заход: {{ row.last_hit[:19] if row.last_hit else '—' }}</p>
+</div>
+
+<div class="card">
+    <h2>Аналитика</h2>
+    {% if access_log %}
+    <table>
+        <tr><th>IP</th><th>User-Agent</th><th>Путь</th><th>Статус</th><th>Время</th></tr>
+        {% for a in access_log %}
+        <tr>
+            <td>{{ a.ip }}</td>
+            <td class="muted" style="max-width:300px;overflow:hidden;text-overflow:ellipsis;">{{ a.user_agent }}</td>
+            <td class="link" style="max-width:280px;overflow:hidden;text-overflow:ellipsis;">{{ a.path }}</td>
+            <td>{{ a.status_code if a.status_code is not none else 'ERR' }}</td>
+            <td class="muted">{{ a.ts[:19] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p class="muted">По этой ссылке ещё не было переходов.</p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
